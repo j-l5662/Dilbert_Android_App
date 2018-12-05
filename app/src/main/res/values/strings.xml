@@ -3,6 +3,6 @@
     <string name="random_date">Random Comic</string>
     <string name="credit">Comics by Scott Adams</string>
     <string name="refresh">Refresh</string>
-    <string name="dilbertURL">http://dilbert.com/</string>
+    <string name="dilbertURL">https://dilbert.com/strip/</string>
     <string name="saved">Saved</string>
 </resources>

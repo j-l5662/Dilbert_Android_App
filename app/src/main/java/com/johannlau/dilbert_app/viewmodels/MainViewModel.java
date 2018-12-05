@@ -7,6 +7,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import com.android.volley.Request;
@@ -30,7 +31,7 @@ import timber.log.Timber;
 
 public class MainViewModel extends AndroidViewModel {
 
-    private MutableLiveData<ArrayList<Bitmap>> mImageList = new MutableLiveData<>();
+    private static MutableLiveData<ArrayList<Bitmap>> mImageList = new MutableLiveData<>();
     private Application mApplication;
     private ArrayList<String> mUrl;
 
@@ -77,11 +78,11 @@ public class MainViewModel extends AndroidViewModel {
 
                                     Timber.i(imageUrl);
 
-                                    bitmaps.add(loadImageFromWebOperations(imageUrl));
+
+                                    LoadImageAsyncTask loadImageAsyncTask = new LoadImageAsyncTask(bitmaps);
+                                    loadImageAsyncTask.execute(imageUrl);
                                 }
                             }
-
-                            mImageList.postValue(bitmaps);
                         }
                     },
                     new Response.ErrorListener() {
@@ -98,21 +99,42 @@ public class MainViewModel extends AndroidViewModel {
         }
     }
 
-    private Bitmap loadImageFromWebOperations(String url) {
+    private static class LoadImageAsyncTask extends AsyncTask<String,Void, Bitmap> {
 
-        Bitmap d = null;
-        InputStream is;
+        ArrayList<Bitmap> bitmapArrayList;
 
-        try {
-            Log.d("LoadImageFromWebOperations", url);
-            is = new URL(url).openStream();
-            d = BitmapFactory.decodeStream(is);
-
-
-        } catch (Exception e) {
-            Log.v("Main", "Error: LoadImageFromWebOperations");
-            e.printStackTrace();
+        public LoadImageAsyncTask(ArrayList<Bitmap> bitmapArrayList) {
+            super();
+            this.bitmapArrayList = bitmapArrayList;
         }
-        return d;
+        @Override
+        protected Bitmap doInBackground(String... strings) {
+            String imageUrl = strings[0];
+
+            Bitmap d = null;
+            InputStream is;
+
+            try {
+                Log.d("LoadImageFromWebOperations", imageUrl);
+                is = new URL(imageUrl).openStream();
+                d = BitmapFactory.decodeStream(is);
+
+
+            } catch (Exception e) {
+                Log.v("Main", "Error: LoadImageFromWebOperations");
+                e.printStackTrace();
+            }
+            return d;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            super.onPostExecute(bitmap);
+
+            bitmapArrayList.add(bitmap);
+
+            mImageList.postValue(bitmapArrayList);
+
+        }
     }
 }

@@ -54,28 +54,29 @@ import java.util.Date;
 import java.util.concurrent.ThreadLocalRandom;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
 
     @BindView(R.id.image_date)
-    private TextView mDate;
+    public TextView mDate;
 
     @BindView(R.id.image_date1)
-    private TextView mRandomDate;
+    public TextView mRandomDate;
 
     @BindView(R.id.image_view)
-    private ImageView mCurrentImageView;
+    public ImageView mCurrentImageView;
 
     @BindView(R.id.image_view2)
-    private ImageView mRandomImageView;
+    public ImageView mRandomImageView;
 
     @BindView(R.id.random_button)
-    private Button mRandomImage;
+    public Button mRandomImage;
 
     @BindView(R.id.swipe_refresh)
-    private SwipeRefreshLayout mSwipeRefreshLayout;
+    public SwipeRefreshLayout mSwipeRefreshLayout;
 
     private LiveData<ArrayList<Bitmap>> mImagesList;
 
@@ -93,6 +94,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        ButterKnife.bind(this);
 
         if(BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
