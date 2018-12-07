@@ -60,9 +60,11 @@ public class MainViewModel extends AndroidViewModel {
 
             RequestQueue requestQueue = Volley.newRequestQueue(appContext);
 
-            String url = mUrl.get(0);
+            String todayImageURL = mUrl.get(0);
 
-            StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+            String randomImageURL = mUrl.get(1);
+
+            StringRequest todayImageNetRequest = new StringRequest(Request.Method.GET, todayImageURL,
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
@@ -92,7 +94,39 @@ public class MainViewModel extends AndroidViewModel {
                             Timber.i(error.toString());
                         }
                     });
-            requestQueue.add(stringRequest);
+
+            StringRequest randomImageNetRequest = new StringRequest(Request.Method.GET, randomImageURL,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+
+                            Document document = Jsoup.parse(response);
+
+                            Elements divs = document.select("div");
+                            for (Element div: divs) {
+
+                                if(div.attr("class").equals("img-comic-container")) {
+                                    Element image = div.select("a").first().select("img").first();
+                                    String imageUrl = mHTTPprotocal + image.attr("src");
+
+                                    Timber.i(imageUrl);
+
+
+                                    LoadImageAsyncTask loadImageAsyncTask = new LoadImageAsyncTask(bitmaps);
+                                    loadImageAsyncTask.execute(imageUrl);
+                                }
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+
+                            Timber.i(error.toString());
+                        }
+                    });
+            requestQueue.add(todayImageNetRequest);
+            requestQueue.add(randomImageNetRequest);
         }
         else {
             Timber.v("App is Offline");

@@ -197,15 +197,13 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 mCurrentImageView.setVisibility(View.INVISIBLE);
                 mRandomImageView.setVisibility(View.INVISIBLE);
                 mCurrentImageView.setImageBitmap(bitmaps.get(0));
-//                mRandomImageView.setImageBitmap(s.get(1));
+                mRandomImageView.setImageBitmap(bitmaps.get(1));
                 mCurrentImageView.setVisibility(View.VISIBLE);
                 mRandomImageView.setVisibility(View.VISIBLE);
             }
         });
 
     }
-
-    //private Arraylist<Bitmap> return listof arraymap
 
     private String SubOneDay(GregorianCalendar calendar){
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");

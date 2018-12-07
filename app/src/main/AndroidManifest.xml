@@ -21,7 +21,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.johannlau.dilbert_app.FullScreenImageActivity"></activity>
+        <activity android:name="com.johannlau.dilbert_app.ui.FullScreenImageActivity"></activity>
     </application>
 
 </manifest>
