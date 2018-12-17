@@ -24,6 +24,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.InputStream;
+import java.lang.reflect.Array;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -35,7 +36,11 @@ public class MainViewModel extends AndroidViewModel {
     private Application mApplication;
     private ArrayList<String> mUrl;
 
-    private String mHTTPprotocal = "https:";
+    private String mhttpProtocol = "https:";
+
+    private static int mBitmapCapacity = 2;
+
+    private final static ArrayList<Bitmap> mBitmaps = new ArrayList<>(mBitmapCapacity);
 
     public MainViewModel(Application application, ArrayList<String> url) {
 
@@ -52,7 +57,11 @@ public class MainViewModel extends AndroidViewModel {
 
         Context appContext = mApplication.getApplicationContext();
 
-        final ArrayList<Bitmap> bitmaps = new ArrayList<>();
+        final ArrayList<Bitmap> bitmaps = new ArrayList<>(2);
+
+        for(int i =0;i<mBitmapCapacity;i++) {
+            mBitmaps.add(null);
+        }
 
         Timber.i(mUrl.get(0));
 
@@ -76,12 +85,9 @@ public class MainViewModel extends AndroidViewModel {
 
                                 if(div.attr("class").equals("img-comic-container")) {
                                     Element image = div.select("a").first().select("img").first();
-                                    String imageUrl = mHTTPprotocal + image.attr("src");
+                                    String imageUrl = mhttpProtocol + image.attr("src");
 
-                                    Timber.i(imageUrl);
-
-
-                                    LoadImageAsyncTask loadImageAsyncTask = new LoadImageAsyncTask(bitmaps);
+                                    LoadImageAsyncTask loadImageAsyncTask = new LoadImageAsyncTask(mBitmaps,0);
                                     loadImageAsyncTask.execute(imageUrl);
                                 }
                             }
@@ -94,6 +100,8 @@ public class MainViewModel extends AndroidViewModel {
                             Timber.i(error.toString());
                         }
                     });
+
+            requestQueue.add(todayImageNetRequest);
 
             StringRequest randomImageNetRequest = new StringRequest(Request.Method.GET, randomImageURL,
                     new Response.Listener<String>() {
@@ -107,12 +115,9 @@ public class MainViewModel extends AndroidViewModel {
 
                                 if(div.attr("class").equals("img-comic-container")) {
                                     Element image = div.select("a").first().select("img").first();
-                                    String imageUrl = mHTTPprotocal + image.attr("src");
+                                    String imageUrl = mhttpProtocol + image.attr("src");
 
-                                    Timber.i(imageUrl);
-
-
-                                    LoadImageAsyncTask loadImageAsyncTask = new LoadImageAsyncTask(bitmaps);
+                                    LoadImageAsyncTask loadImageAsyncTask = new LoadImageAsyncTask(mBitmaps,1);
                                     loadImageAsyncTask.execute(imageUrl);
                                 }
                             }
@@ -125,7 +130,7 @@ public class MainViewModel extends AndroidViewModel {
                             Timber.i(error.toString());
                         }
                     });
-            requestQueue.add(todayImageNetRequest);
+
             requestQueue.add(randomImageNetRequest);
         }
         else {
@@ -136,10 +141,12 @@ public class MainViewModel extends AndroidViewModel {
     private static class LoadImageAsyncTask extends AsyncTask<String,Void, Bitmap> {
 
         ArrayList<Bitmap> bitmapArrayList;
+        int bitMapPlace;
 
-        public LoadImageAsyncTask(ArrayList<Bitmap> bitmapArrayList) {
+        public LoadImageAsyncTask(ArrayList<Bitmap> bitmapArrayList,int arrayPlace) {
             super();
             this.bitmapArrayList = bitmapArrayList;
+            this.bitMapPlace = arrayPlace;
         }
         @Override
         protected Bitmap doInBackground(String... strings) {
@@ -149,13 +156,13 @@ public class MainViewModel extends AndroidViewModel {
             InputStream is;
 
             try {
-                Log.d("LoadImageFromWebOperations", imageUrl);
+
+                Timber.i(imageUrl);
                 is = new URL(imageUrl).openStream();
                 d = BitmapFactory.decodeStream(is);
 
-
             } catch (Exception e) {
-                Log.v("Main", "Error: LoadImageFromWebOperations");
+                Timber.e("Error: LoadImageFromWebOperations");
                 e.printStackTrace();
             }
             return d;
@@ -165,9 +172,9 @@ public class MainViewModel extends AndroidViewModel {
         protected void onPostExecute(Bitmap bitmap) {
             super.onPostExecute(bitmap);
 
-            bitmapArrayList.add(bitmap);
+            mBitmaps.set(bitMapPlace,bitmap);
 
-            mImageList.postValue(bitmapArrayList);
+            mImageList.postValue(mBitmaps);
 
         }
     }

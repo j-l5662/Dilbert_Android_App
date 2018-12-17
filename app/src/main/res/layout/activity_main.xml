@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.SwipeRefreshLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -12,37 +12,38 @@
         tools:context="com.johannlau.test_app.com.johannlau.dilbert_app.ui.MainActivity">
 
         <TextView
+            android:id="@+id/image_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/image_date"
             android:layout_marginTop="20dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
+        <com.github.chrisbanes.photoview.PhotoView
+            android:id="@+id/image_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/image_view"
             android:adjustViewBounds="true"
             app:layout_constraintTop_toBottomOf="@+id/image_date"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"/>
 
         <TextView
+            android:id="@+id/image_date1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/image_date1"
             android:layout_marginTop="20dp"
+            android:clickable="true"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/image_view" />
 
 
-        <ImageView
+        <com.github.chrisbanes.photoview.PhotoView
+            android:id="@+id/image_view2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/image_view2"
             android:adjustViewBounds="true"
             app:layout_constraintTop_toBottomOf="@+id/image_date1"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -60,10 +61,11 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:onClick="onClickRandomButton"
             app:layout_constraintTop_toBottomOf="@+id/image_view2"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            android:text="@string/random_date"
+            android:text="@string/random_bt"
             android:id="@+id/random_button"/>
 
         <TextView
@@ -79,8 +81,6 @@
             app:layout_constraintTop_toBottomOf="@id/image_view2"
             app:layout_constraintVertical_bias="0.95" />
 
-
-
     </android.support.constraint.ConstraintLayout>
-</android.support.v4.widget.SwipeRefreshLayout>
+</FrameLayout>
 
