@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.random_button)
     public Button mRandomImage;
 
-
+    private MainViewModel mainViewModel;
     private LiveData<ArrayList<Bitmap>> mImagesList;
 
     private ArrayList<String> urlList = new ArrayList<>();
@@ -80,6 +80,8 @@ public class MainActivity extends AppCompatActivity {
     private PhotoViewAttacher mPhotoView;
 
     private PhotoViewAttacher mRandomPhotoView;
+
+    private boolean mCurrentImageViewFlag = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,29 +104,30 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-        mCurrentImageView.setOnLongClickListener(new View.OnLongClickListener() {
+        mPhotoView = new PhotoViewAttacher(mCurrentImageView);
+
+        mPhotoView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
-            public boolean onLongClick(View v) {
+            public boolean onLongClick(View view) {
                 Toast.makeText(MainActivity.this, getString(R.string.saved), Toast.LENGTH_SHORT).show();
-                ContentValues values = new ContentValues();
                 MediaStore.Images.Media.insertImage(getContentResolver(), ((BitmapDrawable) mCurrentImageView.getDrawable()).getBitmap(), urlList.get(0) , urlList.get(0));
                 return true;
             }
         });
 
-        mRandomImageView.setOnLongClickListener(new View.OnLongClickListener() {
+        mPhotoView.update();
+
+        mRandomPhotoView = new PhotoViewAttacher(mRandomImageView);
+
+        mRandomPhotoView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
-            public boolean onLongClick(View v) {
+            public boolean onLongClick(View view) {
                 Toast.makeText(MainActivity.this, getString(R.string.saved), Toast.LENGTH_SHORT).show();
                 MediaStore.Images.Media.insertImage(getContentResolver(), ((BitmapDrawable) mCurrentImageView.getDrawable()).getBitmap(), urlList.get(1) , urlList.get(1));
                 return true;
             }
         });
-
-        mPhotoView = new PhotoViewAttacher(mCurrentImageView);
-        mPhotoView.update();
-
-        mRandomPhotoView = new PhotoViewAttacher(mRandomImageView);
+        
         mRandomPhotoView.update();
 
         mCalendar.setTime(date);
@@ -165,33 +168,40 @@ public class MainActivity extends AppCompatActivity {
 
     public void onClickRandomButton(View v) {
 
+        int firstPlace = 1;
+
         String randomDateString = DateUtil.returnRandomDate();
         randomImageUrl = getString(R.string.dilbertURL) + randomDateString;
-        Timber.i(randomImageUrl);
-        urlList.set(1,randomImageUrl);
+        urlList.set(firstPlace,randomImageUrl);
         mRandomDate.setText(randomDateString);
+
+        mainViewModel.returnBitmaps(urlList);
     }
 
     private void setupViewModel() {
 
-        MainViewModel mainViewModel = ViewModelProviders.of(this,new MainPageViewModelFactory(this.getApplication(), urlList)).get(MainViewModel.class);
+        final int dailyBitmap = 0;
+        final int changingBitmap = 1;
 
-        Timber.i(urlList.get(1));
-        mImagesList = mainViewModel.returnBitmaps();
+        if(mainViewModel == null ){
+            mainViewModel = ViewModelProviders.of(this,new MainPageViewModelFactory(this.getApplication(), urlList)).get(MainViewModel.class);
+        }
+
+        mImagesList = mainViewModel.returnBitmaps(urlList);
 
         mImagesList.observe(this, new Observer<ArrayList<Bitmap>>() {
             @Override
             public void onChanged(@Nullable ArrayList<Bitmap> bitmaps) {
-                mCurrentImageView.setVisibility(View.INVISIBLE);
-                mRandomImageView.setVisibility(View.INVISIBLE);
-                Timber.i("Received");
-                if(bitmaps.get(1) != null) {
-                    mRandomImageView.setImageBitmap(bitmaps.get(1));
-                    mRandomImageView.setVisibility(View.VISIBLE);
+
+                if(!mCurrentImageViewFlag) {
+                    mCurrentImageViewFlag = true;
+
 
                 }
-                mCurrentImageView.setImageBitmap(bitmaps.get(0));
+                mCurrentImageView.setImageBitmap(bitmaps.get(dailyBitmap));
                 mCurrentImageView.setVisibility(View.VISIBLE);
+                mRandomImageView.setImageBitmap(bitmaps.get(changingBitmap));
+                mRandomImageView.setVisibility(View.VISIBLE);
             }
         });
 

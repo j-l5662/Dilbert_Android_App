@@ -47,23 +47,31 @@ public class MainViewModel extends AndroidViewModel {
         super(application);
         this.mApplication = application;
         this.mUrl = url;
-
-        loadImagesFromWeb();
     }
 
-    public LiveData<ArrayList<Bitmap>> returnBitmaps() { return mImageList; }
+    public LiveData<ArrayList<Bitmap>> returnBitmaps(ArrayList<String> mUrl) {
+        this.mUrl = mUrl;
+
+        loadImagesFromWeb();
+
+        return mImageList;
+    }
 
     private void loadImagesFromWeb() {
 
         Context appContext = mApplication.getApplicationContext();
 
-        final ArrayList<Bitmap> bitmaps = new ArrayList<>(2);
+        final int bitmapZeroPlace = 0;
+
+        final int bitmapFirstPlace = 1;
+
+        int initialCapacity = 2;
+
+        final ArrayList<Bitmap> bitmaps = new ArrayList<>(initialCapacity);
 
         for(int i =0;i<mBitmapCapacity;i++) {
             mBitmaps.add(null);
         }
-
-        Timber.i(mUrl.get(0));
 
         if(NetworkUtils.isAppOnline(appContext)){
 
@@ -87,7 +95,7 @@ public class MainViewModel extends AndroidViewModel {
                                     Element image = div.select("a").first().select("img").first();
                                     String imageUrl = mhttpProtocol + image.attr("src");
 
-                                    LoadImageAsyncTask loadImageAsyncTask = new LoadImageAsyncTask(mBitmaps,0);
+                                    LoadImageAsyncTask loadImageAsyncTask = new LoadImageAsyncTask(mBitmaps,bitmapZeroPlace);
                                     loadImageAsyncTask.execute(imageUrl);
                                 }
                             }
@@ -117,7 +125,7 @@ public class MainViewModel extends AndroidViewModel {
                                     Element image = div.select("a").first().select("img").first();
                                     String imageUrl = mhttpProtocol + image.attr("src");
 
-                                    LoadImageAsyncTask loadImageAsyncTask = new LoadImageAsyncTask(mBitmaps,1);
+                                    LoadImageAsyncTask loadImageAsyncTask = new LoadImageAsyncTask(mBitmaps,bitmapFirstPlace);
                                     loadImageAsyncTask.execute(imageUrl);
                                 }
                             }
@@ -156,8 +164,6 @@ public class MainViewModel extends AndroidViewModel {
             InputStream is;
 
             try {
-
-                Timber.i(imageUrl);
                 is = new URL(imageUrl).openStream();
                 d = BitmapFactory.decodeStream(is);
 
