@@ -9,7 +9,7 @@ Android application to read the current Dilbert Comic of the day.
 
   Clicking on the TextView on the bottom will take the user to the Dilbert comic homepage.
 
-
+![Screenshot](https://user-images.githubusercontent.com/11635589/63310402-8dd05800-c2c8-11e9-84e3-e87f47bb2398.png)
 
 
 
