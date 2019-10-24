@@ -1,6 +1,8 @@
 package com.johannlau.dilbert_app.ui;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -23,12 +25,9 @@ public class FullScreenImageActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
-        Intent callActivityIntent = getIntent();
-        if(callActivityIntent != null){
-            Uri imageURI = callActivityIntent.getData();
 
-            if(imageURI != null && fullScreenImageView != null) {
-            }
-        }
+        byte[] byteArray = getIntent().getByteArrayExtra("bmp");
+        Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+        fullScreenImageView.setImageBitmap(bmp);
     }
 }

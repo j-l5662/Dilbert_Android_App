@@ -4,7 +4,6 @@ import android.Manifest;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -13,12 +12,10 @@ import android.icu.util.Calendar;
 import android.icu.util.GregorianCalendar;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -36,6 +33,7 @@ import com.johannlau.dilbert_app.viewmodels.MainViewModel;
 import com.johannlau.test_app.BuildConfig;
 import com.johannlau.test_app.R;
 
+import java.io.ByteArrayOutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -77,9 +75,9 @@ public class MainActivity extends AppCompatActivity {
 
     private String randomImageUrl;
 
-    private PhotoViewAttacher mPhotoView;
-
-    private PhotoViewAttacher mRandomPhotoView;
+//    private PhotoViewAttacher mPhotoView;
+//
+//    private PhotoViewAttacher mRandomPhotoView;
 
     private boolean mCurrentImageViewFlag = false;
 
@@ -104,31 +102,35 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-        mPhotoView = new PhotoViewAttacher(mCurrentImageView);
+//        mCurrentImageView.setScaleX(3f);
+//        mCurrentImageView.setScaleY(3f);
 
-        mPhotoView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                Toast.makeText(MainActivity.this, getString(R.string.saved), Toast.LENGTH_SHORT).show();
-                MediaStore.Images.Media.insertImage(getContentResolver(), ((BitmapDrawable) mCurrentImageView.getDrawable()).getBitmap(), urlList.get(0) , urlList.get(0));
-                return true;
-            }
-        });
 
-        mPhotoView.update();
-
-        mRandomPhotoView = new PhotoViewAttacher(mRandomImageView);
-
-        mRandomPhotoView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                Toast.makeText(MainActivity.this, getString(R.string.saved), Toast.LENGTH_SHORT).show();
-                MediaStore.Images.Media.insertImage(getContentResolver(), ((BitmapDrawable) mCurrentImageView.getDrawable()).getBitmap(), urlList.get(1) , urlList.get(1));
-                return true;
-            }
-        });
-        
-        mRandomPhotoView.update();
+//        mPhotoView = new PhotoViewAttacher(mCurrentImageView);
+//
+//        mPhotoView.setOnLongClickListener(new View.OnLongClickListener() {
+//            @Override
+//            public boolean onLongClick(View view) {
+//                Toast.makeText(MainActivity.this, getString(R.string.saved), Toast.LENGTH_SHORT).show();
+//                MediaStore.Images.Media.insertImage(getContentResolver(), ((BitmapDrawable) mCurrentImageView.getDrawable()).getBitmap(), urlList.get(0) , urlList.get(0));
+//                return true;
+//            }
+//        });
+//
+//        mPhotoView.update();
+//
+//        mRandomPhotoView = new PhotoViewAttacher(mRandomImageView);
+//
+//        mRandomPhotoView.setOnLongClickListener(new View.OnLongClickListener() {
+//            @Override
+//            public boolean onLongClick(View view) {
+//                Toast.makeText(MainActivity.this, getString(R.string.saved), Toast.LENGTH_SHORT).show();
+//                MediaStore.Images.Media.insertImage(getContentResolver(), ((BitmapDrawable) mCurrentImageView.getDrawable()).getBitmap(), urlList.get(1) , urlList.get(1));
+//                return true;
+//            }
+//        });
+//
+//        mRandomPhotoView.update();
 
         mCalendar.setTime(date);
 
@@ -191,15 +193,26 @@ public class MainActivity extends AppCompatActivity {
 
         mImagesList.observe(this, new Observer<ArrayList<Bitmap>>() {
             @Override
-            public void onChanged(@Nullable ArrayList<Bitmap> bitmaps) {
+            public void onChanged(@Nullable final ArrayList<Bitmap> bitmaps) {
 
                 if(!mCurrentImageViewFlag) {
                     mCurrentImageViewFlag = true;
-
-
                 }
                 mCurrentImageView.setImageBitmap(bitmaps.get(dailyBitmap));
                 mCurrentImageView.setVisibility(View.VISIBLE);
+                mCurrentImageView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                        Bitmap bmp = bitmaps.get(0);
+                        bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
+
+                        byte[] byteArray = stream.toByteArray();
+                        Intent intent = new Intent(MainActivity.this , FullScreenImageActivity.class);
+                        intent.putExtra("bmp",byteArray);
+                        startActivity(intent);
+                    }
+                });
                 mRandomImageView.setImageBitmap(bitmaps.get(changingBitmap));
                 mRandomImageView.setVisibility(View.VISIBLE);
             }
