@@ -25,7 +25,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.chrisbanes.photoview.PhotoViewAttacher;
 import com.johannlau.dilbert_app.logs.NoLoggingTree;
 import com.johannlau.dilbert_app.utils.DateUtil;
 import com.johannlau.dilbert_app.viewmodelfactory.MainPageViewModelFactory;
@@ -75,10 +74,6 @@ public class MainActivity extends AppCompatActivity {
 
     private String randomImageUrl;
 
-//    private PhotoViewAttacher mPhotoView;
-//
-//    private PhotoViewAttacher mRandomPhotoView;
-
     private boolean mCurrentImageViewFlag = false;
 
     @Override
@@ -108,27 +103,11 @@ public class MainActivity extends AppCompatActivity {
 
 //        mPhotoView = new PhotoViewAttacher(mCurrentImageView);
 //
-//        mPhotoView.setOnLongClickListener(new View.OnLongClickListener() {
-//            @Override
-//            public boolean onLongClick(View view) {
-//                Toast.makeText(MainActivity.this, getString(R.string.saved), Toast.LENGTH_SHORT).show();
-//                MediaStore.Images.Media.insertImage(getContentResolver(), ((BitmapDrawable) mCurrentImageView.getDrawable()).getBitmap(), urlList.get(0) , urlList.get(0));
-//                return true;
-//            }
-//        });
 //
 //        mPhotoView.update();
 //
 //        mRandomPhotoView = new PhotoViewAttacher(mRandomImageView);
 //
-//        mRandomPhotoView.setOnLongClickListener(new View.OnLongClickListener() {
-//            @Override
-//            public boolean onLongClick(View view) {
-//                Toast.makeText(MainActivity.this, getString(R.string.saved), Toast.LENGTH_SHORT).show();
-//                MediaStore.Images.Media.insertImage(getContentResolver(), ((BitmapDrawable) mCurrentImageView.getDrawable()).getBitmap(), urlList.get(1) , urlList.get(1));
-//                return true;
-//            }
-//        });
 //
 //        mRandomPhotoView.update();
 
@@ -204,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                        Bitmap bmp = bitmaps.get(0);
+                        Bitmap bmp = bitmaps.get(dailyBitmap);
                         bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
 
                         byte[] byteArray = stream.toByteArray();
@@ -213,7 +192,39 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(intent);
                     }
                 });
+                mCurrentImageView.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View view) {
+                        Toast.makeText(MainActivity.this, getString(R.string.saved), Toast.LENGTH_SHORT).show();
+                        MediaStore.Images.Media.insertImage(getContentResolver(), ((BitmapDrawable) mCurrentImageView.getDrawable()).getBitmap(), urlList.get(dailyBitmap) , urlList.get(dailyBitmap));
+                        return true;
+                    }
+                });
                 mRandomImageView.setImageBitmap(bitmaps.get(changingBitmap));
+
+                mRandomImageView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                        Bitmap bmp = bitmaps.get(changingBitmap);
+                        bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
+
+                        byte[] byteArray = stream.toByteArray();
+                        Intent intent = new Intent(MainActivity.this , FullScreenImageActivity.class);
+                        intent.putExtra("bmp",byteArray);
+                        startActivity(intent);
+                    }
+                });
+
+                mRandomImageView.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View view) {
+                        Toast.makeText(MainActivity.this, getString(R.string.saved), Toast.LENGTH_SHORT).show();
+                        MediaStore.Images.Media.insertImage(getContentResolver(), ((BitmapDrawable) mCurrentImageView.getDrawable()).getBitmap(), urlList.get(changingBitmap) , urlList.get(changingBitmap));
+
+                        return false;
+                    }
+                });
                 mRandomImageView.setVisibility(View.VISIBLE);
             }
         });

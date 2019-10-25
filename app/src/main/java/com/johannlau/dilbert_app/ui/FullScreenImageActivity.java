@@ -1,14 +1,12 @@
 package com.johannlau.dilbert_app.ui;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.ImageView;
 
 import com.johannlau.test_app.R;
+import com.ortiz.touchview.TouchImageView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -16,7 +14,7 @@ import butterknife.ButterKnife;
 public class FullScreenImageActivity extends AppCompatActivity {
 
     @BindView(R.id.full_screen_image)
-    ImageView fullScreenImageView;
+    TouchImageView fullScreenImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,9 +23,9 @@ public class FullScreenImageActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
-
         byte[] byteArray = getIntent().getByteArrayExtra("bmp");
         Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
         fullScreenImageView.setImageBitmap(bmp);
+
     }
 }

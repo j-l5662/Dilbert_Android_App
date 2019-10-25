@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="#000"
     tools:context="com.johannlau.test_app.com.johannlau.dilbert_app.FullScreenImageActivity">
-    <ImageView
+    <com.ortiz.touchview.TouchImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/full_screen_image"/>

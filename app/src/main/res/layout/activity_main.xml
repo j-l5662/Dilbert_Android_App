@@ -20,7 +20,7 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <com.github.chrisbanes.photoview.PhotoView
+        <ImageView
             android:id="@+id/image_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -40,7 +40,7 @@
             app:layout_constraintTop_toBottomOf="@id/image_view" />
 
 
-        <com.github.chrisbanes.photoview.PhotoView
+        <ImageView
             android:id="@+id/image_view2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
