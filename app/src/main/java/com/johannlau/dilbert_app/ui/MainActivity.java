@@ -97,20 +97,6 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-//        mCurrentImageView.setScaleX(3f);
-//        mCurrentImageView.setScaleY(3f);
-
-
-//        mPhotoView = new PhotoViewAttacher(mCurrentImageView);
-//
-//
-//        mPhotoView.update();
-//
-//        mRandomPhotoView = new PhotoViewAttacher(mRandomImageView);
-//
-//
-//        mRandomPhotoView.update();
-
         mCalendar.setTime(date);
 
         String previousDate = SubOneDay(mCalendar);
@@ -137,7 +123,11 @@ public class MainActivity extends AppCompatActivity {
         int menuItemSelected = item.getItemId();
         if(menuItemSelected == R.id.refreshImage){
             setDates();
-            setupViewModel();
+            Timber.log(0,"Logging Menu Select");
+            String previousDate = SubOneDay(mCalendar);
+            randomImageUrl = getString(R.string.dilbertURL) + previousDate;
+            urlList.set(1,randomImageUrl);
+            mainViewModel.returnBitmaps(urlList);
         }
         return super.onOptionsItemSelected(item);
     }
