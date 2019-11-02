@@ -62,13 +62,13 @@ public class MainActivity extends AppCompatActivity {
     private MainViewModel mainViewModel;
     private LiveData<ArrayList<Bitmap>> mImagesList;
 
-    private ArrayList<String> urlList = new ArrayList<>();
+    private ArrayList<String> urlList;
 
-    private Date date = new Date();
+    private Date date;
 
     private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");;
 
-    GregorianCalendar mCalendar = new GregorianCalendar();
+    GregorianCalendar mCalendar;
 
     private String todayImageUrl;
 
@@ -96,7 +96,9 @@ public class MainActivity extends AppCompatActivity {
                     { Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE }, 0);
 
         }
-
+        date = new Date();
+        urlList = new ArrayList<>();
+        mCalendar = new GregorianCalendar();
         mCalendar.setTime(date);
 
         String previousDate = SubOneDay(mCalendar);
@@ -122,8 +124,9 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int menuItemSelected = item.getItemId();
         if(menuItemSelected == R.id.refreshImage){
+            date = new Date();
+            mCalendar.setTime(date);
             setDates();
-            Timber.log(0,"Logging Menu Select");
             String previousDate = SubOneDay(mCalendar);
             randomImageUrl = getString(R.string.dilbertURL) + previousDate;
             urlList.set(1,randomImageUrl);

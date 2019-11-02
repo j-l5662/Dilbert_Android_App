@@ -21,7 +21,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.johannlau.dilbert_app.ui.FullScreenImageActivity"></activity>
+        <activity android:name="com.johannlau.dilbert_app.ui.FullScreenImageActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar">
+
+
+        </activity>
     </application>
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
